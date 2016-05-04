@@ -3,7 +3,6 @@ require "isNodeJS"
 
 { Void, Null, Nan, isType, getType, assertType } = require "type-utils"
 
-repeatString = require "repeat-string"
 stripAnsi = require "strip-ansi"
 KeyMirror = require "keymirror"
 Type = require "Type"

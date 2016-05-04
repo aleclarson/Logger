@@ -16,11 +16,9 @@ module.exports = (type) ->
 
 values =
 
-  color: -> {}
+  isColorful: no
 
-  isColorful: (options) ->
-    return no unless isNodeJS
-    return @process?.stdout?.isTTY is yes
+  color: -> {}
 
 methods =
 
@@ -44,11 +42,11 @@ phases =
         style
 
       for key, prop of attributes
-        prop.define this, key
+        prop.define target, key
       return
 
     defineAttributes this, (lines) =>
-      @_log lines.join @ln
+      @_printLines lines
 
     defineAttributes @color, (lines) =>
       lines.join @ln

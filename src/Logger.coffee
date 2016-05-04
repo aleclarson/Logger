@@ -4,7 +4,6 @@ require "isNodeJS"
 { assert, assertType, Void } = require "type-utils"
 
 emptyFunction = require "emptyFunction"
-repeatString = require "repeat-string"
 stripAnsi = require "strip-ansi"
 Event = require "event"
 Type = require "Type"
@@ -23,16 +22,11 @@ type = Type "Logger", ->
 
 type.optionTypes =
   print: Function
-  process: if isNodeJS then [ Object.Kind, Void ] else Void
 
 type.optionDefaults =
   print: emptyFunction
 
 type.defineProperties
-
-  size: get: ->
-    return null unless @process and @process.stdout and @process.stdout.isTTY
-    @process.stdout.getWindowSize()
 
   line: get: ->
     @lines[@_line]
@@ -56,14 +50,6 @@ type.defineValues
 type.initInstance (options) ->
   assert options.process or options.print,
     reason: "Must provide 'options.process' or 'options.print'!"
-
-if isNodeJS
-  type.initInstance (options) ->
-    return unless options.process
-    @process = options.process
-    if @process.stdout
-      @_print = (message) =>
-        @process.stdout.write message
 
 type.addMixins [
   require "./mixins/Indent"
@@ -109,7 +95,7 @@ type.defineMethods
     return
 
   clear: ->
-    @__willClear()
+    # @__willClear()
     @lines = [new Line 0]
     @_line = 0
     return
@@ -126,7 +112,7 @@ type.defineMethods
 
   deleteLine: ->
     @lines.pop()
-    if @process
+    if @_process # TODO: Move this into the MainLogger
       @ansi "2K"
       @cursor.y--
     else

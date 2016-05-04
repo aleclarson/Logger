@@ -8,6 +8,8 @@ module.exports = (type) ->
 
   type.defineValues values
 
+  type.defineProperties properties
+
   type.defineMethods methods
 
   type.initInstance phases.initInstance
@@ -17,6 +19,8 @@ values =
   _indent: ""
 
   _indentStack: -> []
+
+properties =
 
   indent:
     value: 0
