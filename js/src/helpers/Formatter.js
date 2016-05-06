@@ -31,7 +31,7 @@ type = Type("Logger_Formatter", function(obj, options) {
     options.isColorful = this._log.isColorful;
   }
   if (options.maxStringLength == null) {
-    options.maxStringLength = options.unlimited ? Infinity : this.maxStringLength;
+    options.maxStringLength = options.unlimited ? 2e308 : this.maxStringLength;
   }
   value = this._formatValue(obj, options);
   if (value) {
@@ -45,13 +45,13 @@ type = Type("Logger_Formatter", function(obj, options) {
       options.showInherited = this.showInherited;
     }
     if (options.maxObjectDepth == null) {
-      options.maxObjectDepth = options.unlimited ? Infinity : this.maxObjectDepth;
+      options.maxObjectDepth = options.unlimited ? 2e308 : this.maxObjectDepth;
     }
     if (options.maxObjectKeys == null) {
-      options.maxObjectKeys = options.unlimited ? Infinity : this.maxObjectKeys;
+      options.maxObjectKeys = options.unlimited ? 2e308 : this.maxObjectKeys;
     }
     if (options.maxArrayKeys == null) {
-      options.maxArrayKeys = options.unlimited ? Infinity : this.maxArrayKeys;
+      options.maxArrayKeys = options.unlimited ? 2e308 : this.maxArrayKeys;
     }
     parts.push(this._formatObject(obj, options));
   }
@@ -256,8 +256,8 @@ type.defineMethods({
     parts = [ln, key, color.green.dim(": ")];
     try {
       value = obj[key];
-    } catch (_error) {
-      error = _error;
+    } catch (error1) {
+      error = error1;
       parts.push(color.red(error.message));
       return parts;
     }
@@ -274,7 +274,7 @@ type.defineMethods({
       } else {
         parts = parts.concat([color.gray.dim("goto("), color.white(options.keyPath), color.gray.dim(")")]);
       }
-      return;
+      return parts;
     }
     collapse = options.collapse, keyPath = options.keyPath;
     if (isType(collapse, Function.Kind)) {

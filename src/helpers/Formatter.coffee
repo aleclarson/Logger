@@ -285,7 +285,7 @@ type.defineMethods
           color.white options.keyPath
           color.gray.dim ")"
         ]
-      return
+      return parts
 
     { collapse, keyPath } = options
 
