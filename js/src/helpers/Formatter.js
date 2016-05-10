@@ -251,7 +251,7 @@ type.defineMethods({
     return parts;
   },
   _formatObjectKey: function(obj, key, options) {
-    var collapse, color, error, index, keyPath, ln, parts, ref1, value, valueParts;
+    var collapse, color, error, keyPath, ln, parts, ref1, value, valueParts;
     ref1 = this._log, ln = ref1.ln, color = ref1.color;
     parts = [ln, key, color.green.dim(": ")];
     try {
@@ -266,14 +266,9 @@ type.defineMethods({
       parts = parts.concat(valueParts);
       return parts;
     }
-    index = options.objects.indexOf(value);
-    if (index >= 0) {
-      keyPath = options.keyPaths[index];
-      if (keyPath.length === 0) {
-        parts.push(color.gray.dim("[circular]"));
-      } else {
-        parts = parts.concat([color.gray.dim("goto("), color.white(options.keyPath), color.gray.dim(")")]);
-      }
+    valueParts = this._formatDuplicateObject(value, options);
+    if (valueParts) {
+      parts = parts.concat(valueParts);
       return parts;
     }
     collapse = options.collapse, keyPath = options.keyPath;
@@ -287,11 +282,24 @@ type.defineMethods({
       options.keyPath += ".";
     }
     options.keyPath += key;
-    options.depth++;
+    options.depth += 1;
     parts = parts.concat(this._formatObject(value, options, collapse));
-    options.depth--;
+    options.depth -= 1;
     options.keyPath = keyPath;
     return parts;
+  },
+  _formatDuplicateObject: function(value, options) {
+    var color, index, keyPath;
+    color = this._log.color;
+    index = options.objects.indexOf(value);
+    if (index < 0) {
+      return;
+    }
+    keyPath = options.keyPaths[index];
+    if (keyPath.length === 0) {
+      return color.cyan("this");
+    }
+    return [color.cyan("this." + keyPath)];
   },
   _getInheritedValues: function(obj) {
     var count, j, key, len, objProto, objType, ref1, values;

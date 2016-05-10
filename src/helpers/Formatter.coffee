@@ -269,22 +269,13 @@ type.defineMethods
       return parts
 
     valueParts = @_formatValue value, options
-
     if valueParts
       parts = parts.concat valueParts
       return parts
 
-    index = options.objects.indexOf value
-    if index >= 0
-      keyPath = options.keyPaths[index]
-      if keyPath.length is 0
-        parts.push color.gray.dim "[circular]"
-      else
-        parts = parts.concat [
-          color.gray.dim "goto("
-          color.white options.keyPath
-          color.gray.dim ")"
-        ]
+    valueParts = @_formatDuplicateObject value, options
+    if valueParts
+      parts = parts.concat valueParts
       return parts
 
     { collapse, keyPath } = options
@@ -292,16 +283,33 @@ type.defineMethods
     collapse = collapse value, key, obj if isType collapse, Function.Kind
     collapse = no unless isType collapse, Boolean
 
-    options.keyPath += "." unless keyPath is ""
+    options.keyPath += "." if keyPath isnt ""
     options.keyPath += key
-    options.depth++
+    options.depth += 1
 
     parts = parts.concat @_formatObject value, options, collapse
 
-    options.depth--
+    options.depth -= 1
     options.keyPath = keyPath
 
     return parts
+
+  _formatDuplicateObject: (value, options) ->
+
+    { color } = @_log
+
+    index = options.objects.indexOf value
+
+    return if index < 0
+
+    keyPath = options.keyPaths[index]
+
+    if keyPath.length is 0
+      return color.cyan "this"
+
+    return [
+      color.cyan "this." + keyPath
+    ]
 
   _getInheritedValues: (obj) ->
 
