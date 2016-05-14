@@ -1,7 +1,8 @@
 
-{ Null, Nan, isType } = require "type-utils"
-
+isType = require "isType"
+Null = require "Null"
 sync = require "sync"
+Nan = require "Nan"
 
 AddableType = [ String, Number, Boolean, Nan, Null ]
 

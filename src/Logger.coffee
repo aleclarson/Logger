@@ -1,11 +1,12 @@
 
 require "isNodeJS"
 
-{ assert, assertType, Void } = require "type-utils"
-
 emptyFunction = require "emptyFunction"
+assertType = require "assertType"
 stripAnsi = require "strip-ansi"
+assert = require "assert"
 Event = require "event"
+Void = require "Void"
 Type = require "Type"
 sync = require "sync"
 
@@ -95,7 +96,7 @@ type.defineMethods
     return
 
   clear: ->
-    # @__willClear()
+    @__willClear()
     @lines = [new Line 0]
     @_line = 0
     return

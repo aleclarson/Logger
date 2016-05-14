@@ -1,8 +1,12 @@
-var AddableType, Nan, Null, concatArgs, isType, ref, sync;
+var AddableType, Nan, Null, concatArgs, isType, sync;
 
-ref = require("type-utils"), Null = ref.Null, Nan = ref.Nan, isType = ref.isType;
+isType = require("isType");
+
+Null = require("Null");
 
 sync = require("sync");
+
+Nan = require("Nan");
 
 AddableType = [String, Number, Boolean, Nan, Null];
 

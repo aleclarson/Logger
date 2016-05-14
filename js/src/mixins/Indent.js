@@ -1,8 +1,8 @@
 var assertType, hook, hooks, methods, phases, properties, repeatString, values;
 
-assertType = require("type-utils").assertType;
-
 repeatString = require("repeat-string");
+
+assertType = require("assertType");
 
 hook = require("hook");
 

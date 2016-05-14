@@ -1,11 +1,15 @@
 
 require "isNodeJS"
 
-{ Void, Null, Nan, isType, getType, assertType } = require "type-utils"
-
+assertType = require "assertType"
 stripAnsi = require "strip-ansi"
 KeyMirror = require "keymirror"
+getType = require "getType"
+isType = require "isType"
+Null = require "Null"
+Void = require "Void"
 Type = require "Type"
+Nan = require "Nan"
 
 concatArgs = require "./concatArgs"
 

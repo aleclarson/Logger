@@ -1,10 +1,10 @@
 var Palette, Property, Shape, Style, Type, ansi, concatArgs, emptyFunction, sync, type;
 
-Shape = require("type-utils").Shape;
-
 emptyFunction = require("emptyFunction");
 
 Property = require("Property");
+
+Shape = require("Shape");
 
 ansi = require("ansi-256-colors");
 

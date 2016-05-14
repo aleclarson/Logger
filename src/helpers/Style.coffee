@@ -1,8 +1,7 @@
 
-{ Shape } = require "type-utils"
-
 emptyFunction = require "emptyFunction"
 Property = require "Property"
+Shape = require "Shape"
 ansi = require "ansi-256-colors"
 sync = require "sync"
 Type = require "Type"

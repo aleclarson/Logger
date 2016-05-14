@@ -1,14 +1,18 @@
-var Event, Formatter, Line, Logger, Type, Void, assert, assertType, concatArgs, emptyFunction, ref, stripAnsi, sync, type;
+var Event, Formatter, Line, Logger, Type, Void, assert, assertType, concatArgs, emptyFunction, stripAnsi, sync, type;
 
 require("isNodeJS");
 
-ref = require("type-utils"), assert = ref.assert, assertType = ref.assertType, Void = ref.Void;
-
 emptyFunction = require("emptyFunction");
+
+assertType = require("assertType");
 
 stripAnsi = require("strip-ansi");
 
+assert = require("assert");
+
 Event = require("event");
+
+Void = require("Void");
 
 Type = require("Type");
 
@@ -115,6 +119,7 @@ type.defineMethods({
     this.moat(1);
   },
   clear: function() {
+    this.__willClear();
     this.lines = [new Line(0)];
     this._line = 0;
   },

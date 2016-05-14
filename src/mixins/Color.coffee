@@ -1,10 +1,11 @@
 
 require "isNodeJS"
 
-{ isType, setType, Shape } = require "type-utils"
-
 LazyVar = require "lazy-var"
+setType = require "setType"
 combine = require "combine"
+isType = require "isType"
+Shape = require "Shape"
 
 Style = require "../helpers/Style"
 

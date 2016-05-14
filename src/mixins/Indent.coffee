@@ -1,7 +1,6 @@
 
-{ assertType } = require "type-utils"
-
 repeatString = require "repeat-string"
+assertType = require "assertType"
 hook = require "hook"
 
 module.exports = (type) ->

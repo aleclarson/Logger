@@ -1,6 +1,6 @@
 var Type, isType, type;
 
-isType = require("type-utils").isType;
+isType = require("isType");
 
 Type = require("Type");
 

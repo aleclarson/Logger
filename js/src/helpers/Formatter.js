@@ -1,14 +1,24 @@
-var KeyMirror, Nan, Null, Type, Void, assertType, concatArgs, getType, isType, ref, stripAnsi, type;
+var KeyMirror, Nan, Null, Type, Void, assertType, concatArgs, getType, isType, stripAnsi, type;
 
 require("isNodeJS");
 
-ref = require("type-utils"), Void = ref.Void, Null = ref.Null, Nan = ref.Nan, isType = ref.isType, getType = ref.getType, assertType = ref.assertType;
+assertType = require("assertType");
 
 stripAnsi = require("strip-ansi");
 
 KeyMirror = require("keymirror");
 
+getType = require("getType");
+
+isType = require("isType");
+
+Null = require("Null");
+
+Void = require("Void");
+
 Type = require("Type");
+
+Nan = require("Nan");
 
 concatArgs = require("./concatArgs");
 
@@ -91,8 +101,8 @@ type.defineMethods({
     }
   },
   _formatValue: function(value, options) {
-    var color, i, isTruncated, j, len, line, ln, parts, ref1, ref2, valueType;
-    ref1 = this._log, color = ref1.color, ln = ref1.ln;
+    var color, i, isTruncated, j, len, line, ln, parts, ref, ref1, valueType;
+    ref = this._log, color = ref.color, ln = ref.ln;
     valueType = getType(value);
     if (valueType === String) {
       value = stripAnsi(value);
@@ -102,9 +112,9 @@ type.defineMethods({
       }
       parts = [];
       parts.push(color.green("\""));
-      ref2 = value.split(ln);
-      for (i = j = 0, len = ref2.length; j < len; i = ++j) {
-        line = ref2[i];
+      ref1 = value.split(ln);
+      for (i = j = 0, len = ref1.length; j < len; i = ++j) {
+        line = ref1[i];
         if (i > 0) {
           parts.push(ln);
         }
@@ -193,9 +203,9 @@ type.defineMethods({
     return parts;
   },
   _formatObjectKeys: function(obj, options) {
-    var color, hasInheritedValues, indent, inherited, isRoot, isTruncated, j, key, keys, len, ln, maxKeyCount, parts, ref1, ref2;
+    var color, hasInheritedValues, indent, inherited, isRoot, isTruncated, j, key, keys, len, ln, maxKeyCount, parts, ref, ref1;
     assertType(options, Object);
-    ref1 = this._log, color = ref1.color, ln = ref1.ln;
+    ref = this._log, color = ref.color, ln = ref.ln;
     if (!this._isLoggableObject(obj)) {
       return color.red("Failed to log.");
     }
@@ -231,9 +241,9 @@ type.defineMethods({
     options.objects.push(obj);
     options.keyPaths.push(options.keyPath);
     parts = [];
-    ref2 = keys._keys;
-    for (j = 0, len = ref2.length; j < len; j++) {
-      key = ref2[j];
+    ref1 = keys._keys;
+    for (j = 0, len = ref1.length; j < len; j++) {
+      key = ref1[j];
       parts = parts.concat(this._formatObjectKey(obj, key, options));
     }
     if (isTruncated) {
@@ -251,8 +261,8 @@ type.defineMethods({
     return parts;
   },
   _formatObjectKey: function(obj, key, options) {
-    var collapse, color, error, keyPath, ln, parts, ref1, value, valueParts;
-    ref1 = this._log, ln = ref1.ln, color = ref1.color;
+    var collapse, color, error, keyPath, ln, parts, ref, value, valueParts;
+    ref = this._log, ln = ref.ln, color = ref.color;
     parts = [ln, key, color.green.dim(": ")];
     try {
       value = obj[key];
@@ -302,7 +312,7 @@ type.defineMethods({
     return [color.cyan("this." + keyPath)];
   },
   _getInheritedValues: function(obj) {
-    var count, j, key, len, objProto, objType, ref1, values;
+    var count, j, key, len, objProto, objType, ref, values;
     if (!obj) {
       return;
     }
@@ -315,9 +325,9 @@ type.defineMethods({
     while (true) {
       objProto = objType.prototype;
       if (objProto != null) {
-        ref1 = Object.getOwnPropertyNames(objProto);
-        for (j = 0, len = ref1.length; j < len; j++) {
-          key = ref1[j];
+        ref = Object.getOwnPropertyNames(objProto);
+        for (j = 0, len = ref.length; j < len; j++) {
+          key = ref[j];
           if (key === "constructor") {
             continue;
           }

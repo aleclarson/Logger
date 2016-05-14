@@ -1,12 +1,16 @@
-var LazyVar, Shape, Style, combine, defaultPalette, isType, methods, phases, ref, setType, values;
+var LazyVar, Shape, Style, combine, defaultPalette, isType, methods, phases, setType, values;
 
 require("isNodeJS");
 
-ref = require("type-utils"), isType = ref.isType, setType = ref.setType, Shape = ref.Shape;
-
 LazyVar = require("lazy-var");
 
+setType = require("setType");
+
 combine = require("combine");
+
+isType = require("isType");
+
+Shape = require("Shape");
 
 Style = require("../helpers/Style");
 

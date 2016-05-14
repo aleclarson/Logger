@@ -1,6 +1,5 @@
 
-{ isType } = require "type-utils"
-
+isType = require "isType"
 Type = require "Type"
 
 type = Type "Logger_Line"
