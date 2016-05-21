@@ -6,6 +6,8 @@ emptyFunction = require("emptyFunction");
 
 assertType = require("assertType");
 
+Formatter = require("Formatter");
+
 stripAnsi = require("strip-ansi");
 
 assert = require("assert");
@@ -20,21 +22,10 @@ sync = require("sync");
 
 concatArgs = require("./helpers/concatArgs");
 
-Formatter = require("./helpers/Formatter");
-
 Line = require("./helpers/Line");
 
 type = Type("Logger", function() {
-  var args, i, len, value;
-  if (!this._canLog()) {
-    return;
-  }
-  args = [];
-  for (i = 0, len = arguments.length; i < len; i++) {
-    value = arguments[i];
-    args.push(value);
-  }
-  this._log(args);
+  return this._log.apply(this, arguments);
 });
 
 type.optionTypes = {
@@ -82,13 +73,11 @@ type.initInstance(function(options) {
 type.addMixins([require("./mixins/Indent"), require("./mixins/Color"), require("./mixins/Env")]);
 
 type.defineValues({
-  format: function() {
-    return Formatter(this);
+  _format: function() {
+    return Formatter({
+      colors: this.color
+    });
   }
-});
-
-type.defineStatics({
-  Line: Line
 });
 
 type.defineMethods({
@@ -97,12 +86,6 @@ type.defineMethods({
     this.apply(null, arguments);
     this.moat(0);
   },
-  ansi: function(code) {
-    if (!isNodeJS) {
-      return;
-    }
-    this._print("\x1b[" + code);
-  },
   moat: function(width) {
     var _width;
     assertType(width, Number);
@@ -110,6 +93,16 @@ type.defineMethods({
     while (_width++ < width) {
       this._printNewLine();
     }
+  },
+  format: function(value, options) {
+    this._log(this._format(value, options));
+    this.moat(0);
+  },
+  ansi: function(code) {
+    if (!isNodeJS) {
+      return;
+    }
+    this._print("\x1b[" + code);
   },
   withLabel: function(label, message) {
     this.moat(1);
@@ -147,7 +140,19 @@ type.defineMethods({
     }
     return true;
   },
-  _log: function(args) {
+  _log: function() {
+    var args, i, len, value;
+    if (!this._canLog()) {
+      return;
+    }
+    args = [];
+    for (i = 0, len = arguments.length; i < len; i++) {
+      value = arguments[i];
+      args.push(value);
+    }
+    return this._logArgs(args);
+  },
+  _logArgs: function(args) {
     assertType(args, Array);
     args = concatArgs(args);
     if (args.length === 0) {

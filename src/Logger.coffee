@@ -3,6 +3,7 @@ require "isNodeJS"
 
 emptyFunction = require "emptyFunction"
 assertType = require "assertType"
+Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
 assert = require "assert"
 Event = require "event"
@@ -11,15 +12,9 @@ Type = require "Type"
 sync = require "sync"
 
 concatArgs = require "./helpers/concatArgs"
-Formatter = require "./helpers/Formatter"
 Line = require "./helpers/Line"
 
-type = Type "Logger", ->
-  return unless @_canLog()
-  args = [] # Must not leak arguments object!
-  args.push value for value in arguments
-  @_log args
-  return
+type = Type "Logger", -> @_log.apply this, arguments
 
 type.optionTypes =
   print: Function
@@ -58,9 +53,10 @@ type.addMixins [
   require "./mixins/Env"
 ]
 
-type.defineValues { format: -> Formatter this }
+type.defineValues
 
-type.defineStatics { Line }
+  _format: ->
+    Formatter { colors: @color }
 
 type.defineMethods
 
@@ -68,11 +64,6 @@ type.defineMethods
     @moat 0
     @apply null, arguments
     @moat 0
-    return
-
-  ansi: (code) ->
-    return unless isNodeJS
-    @_print "\x1b[#{code}"
     return
 
   moat: (width) ->
@@ -87,6 +78,16 @@ type.defineMethods
 
     return
 
+  format: (value, options) ->
+    @_log @_format value, options
+    @moat 0
+    return
+
+  ansi: (code) ->
+    return unless isNodeJS
+    @_print "\x1b[#{code}"
+    return
+
   withLabel: (label, message) ->
     @moat 1
     @ label
@@ -97,7 +98,7 @@ type.defineMethods
 
   clear: ->
     @__willClear()
-    @lines = [new Line 0]
+    @lines = [ new Line 0 ]
     @_line = 0
     return
 
@@ -128,7 +129,13 @@ type.defineMethods
     return no if @isQuiet
     return yes
 
-  _log: (args) ->
+  _log: ->
+    return unless @_canLog()
+    args = [] # Must not leak arguments object!
+    args.push value for value in arguments
+    @_logArgs args
+
+  _logArgs: (args) ->
     assertType args, Array
     args = concatArgs args
     return no if args.length is 0
