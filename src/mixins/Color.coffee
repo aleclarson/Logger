@@ -1,6 +1,7 @@
 
 require "isNodeJS"
 
+stripAnsi = require "strip-ansi"
 LazyVar = require "lazy-var"
 setType = require "setType"
 combine = require "combine"
@@ -21,13 +22,6 @@ values =
 
   color: -> {}
 
-methods =
-
-  _shouldColorize: ->
-    return no unless isNodeJS
-    return no if log.isQuiet
-    return log.isColorful
-
 phases =
 
   initInstance: (options) ->
@@ -47,10 +41,12 @@ phases =
       return
 
     defineAttributes this, (lines) =>
-      @_printLines lines
+      lines = lines.map stripAnsi if not @isColorful
+      return @_printLines lines
 
     defineAttributes @color, (lines) =>
-      lines.join @ln
+      lines = lines.map stripAnsi if not @isColorful
+      return lines.join @ln
 
 defaultPalette =
 

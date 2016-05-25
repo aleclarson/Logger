@@ -1,6 +1,8 @@
-var LazyVar, Shape, Style, combine, defaultPalette, isType, methods, phases, setType, values;
+var LazyVar, Shape, Style, combine, defaultPalette, isType, phases, setType, stripAnsi, values;
 
 require("isNodeJS");
+
+stripAnsi = require("strip-ansi");
 
 LazyVar = require("lazy-var");
 
@@ -23,18 +25,6 @@ values = {
   isColorful: false,
   color: function() {
     return {};
-  }
-};
-
-methods = {
-  _shouldColorize: function() {
-    if (!isNodeJS) {
-      return false;
-    }
-    if (log.isQuiet) {
-      return false;
-    }
-    return log.isColorful;
   }
 };
 
@@ -63,11 +53,17 @@ phases = {
     })(this);
     defineAttributes(this, (function(_this) {
       return function(lines) {
+        if (!_this.isColorful) {
+          lines = lines.map(stripAnsi);
+        }
         return _this._printLines(lines);
       };
     })(this));
     return defineAttributes(this.color, (function(_this) {
       return function(lines) {
+        if (!_this.isColorful) {
+          lines = lines.map(stripAnsi);
+        }
         return lines.join(_this.ln);
       };
     })(this));
