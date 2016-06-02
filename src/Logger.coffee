@@ -10,6 +10,7 @@ Event = require "event"
 Void = require "Void"
 Type = require "Type"
 sync = require "sync"
+Q = require "q"
 
 concatArgs = require "./helpers/concatArgs"
 Line = require "./helpers/Line"
@@ -41,7 +42,13 @@ type.defineValues
 
   didPrint: -> Event()
 
-  _print: (options) -> options.print
+  _print: ({ print }) ->
+    queue = Q()
+    return (message) ->
+      queue = queue.then ->
+        print message
+      queue.done()
+      return
 
 type.initInstance (options) ->
   assert options.process or options.print,
