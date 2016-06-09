@@ -1,4 +1,4 @@
-var Event, Formatter, Line, Logger, Q, Type, Void, assert, assertType, concatArgs, emptyFunction, stripAnsi, sync, type;
+var Event, Formatter, Line, Logger, Promise, Type, Void, assert, assertType, concatArgs, emptyFunction, stripAnsi, sync, type;
 
 require("isNodeJS");
 
@@ -10,6 +10,8 @@ Formatter = require("Formatter");
 
 stripAnsi = require("strip-ansi");
 
+Promise = require("Promise");
+
 assert = require("assert");
 
 Event = require("event");
@@ -19,8 +21,6 @@ Void = require("Void");
 Type = require("Type");
 
 sync = require("sync");
-
-Q = require("q");
 
 concatArgs = require("./helpers/concatArgs");
 
@@ -64,7 +64,7 @@ type.defineValues({
   _print: function(arg) {
     var print, queue;
     print = arg.print;
-    queue = Q();
+    queue = Promise();
     return function(message) {
       queue = queue.then(function() {
         return print(message);

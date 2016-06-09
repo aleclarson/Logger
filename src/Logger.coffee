@@ -5,12 +5,12 @@ emptyFunction = require "emptyFunction"
 assertType = require "assertType"
 Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
+Promise = require "Promise"
 assert = require "assert"
 Event = require "event"
 Void = require "Void"
 Type = require "Type"
 sync = require "sync"
-Q = require "q"
 
 concatArgs = require "./helpers/concatArgs"
 Line = require "./helpers/Line"
@@ -43,7 +43,7 @@ type.defineValues
   didPrint: -> Event()
 
   _print: ({ print }) ->
-    queue = Q()
+    queue = Promise()
     return (message) ->
       queue = queue.then ->
         print message
