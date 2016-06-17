@@ -7,10 +7,8 @@ Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
 Promise = require "Promise"
 assert = require "assert"
-Event = require "event"
-Void = require "Void"
+Event = require "Event"
 Type = require "Type"
-sync = require "sync"
 
 concatArgs = require "./helpers/concatArgs"
 Line = require "./helpers/Line"
@@ -74,15 +72,9 @@ type.defineMethods
     return
 
   moat: (width) ->
-
     assertType width, Number
-
-    # Calculate the required newlines to match the specified moat width.
-    _width = @_computeMoatFrom @_line
-
-    # Print the required newlines.
-    @_printNewLine() while _width++ < width
-
+    emptyLines = @_countEmptyLines @_line
+    @_printNewLine() while width >= emptyLines++
     return
 
   format: (value, options) ->
@@ -158,17 +150,20 @@ type.defineMethods
     @_printToChunk lastLine
     return
 
-  # Calculates the number of new-lines to print before a moat is full.
-  _computeMoatFrom: (line) ->
-    width = -1
-    loop
-      if @lines[line].length is 0
-        width++
-      else
-        break
-      if line-- is 0
-        break
-    width # If this equals -1, the current line has a length greater than zero.
+  _countEmptyLines: ->
+
+    count = 0
+    index = @_line
+
+    while line = @lines[index]
+
+      break if stripAnsi(line.contents).trim().length
+      count += 1
+
+      break if index is 0
+      index -= 1
+
+    return count
 
   _printToChunk: (message, chunk = {}) ->
     chunk.message = message
@@ -220,4 +215,4 @@ type.defineMethods
     else
       @_printToChunk @ln, silent: yes
 
-module.exports = Logger = type.build()
+module.exports = type.build()

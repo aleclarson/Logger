@@ -1,10 +1,9 @@
 
 require "isNodeJS"
 
+cloneObject = require "cloneObject"
 stripAnsi = require "strip-ansi"
-LazyVar = require "lazy-var"
 setType = require "setType"
-combine = require "combine"
 isType = require "isType"
 Shape = require "Shape"
 
@@ -26,7 +25,7 @@ phases =
 
   initInstance: (options) ->
 
-    palette = options.palette or combine {}, defaultPalette
+    palette = options.palette or cloneObject defaultPalette
     colors = Object.keys palette.bright
 
     defineAttributes = (target, transform) =>

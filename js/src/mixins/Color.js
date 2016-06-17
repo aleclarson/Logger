@@ -1,14 +1,12 @@
-var LazyVar, Shape, Style, combine, defaultPalette, isType, phases, setType, stripAnsi, values;
+var Shape, Style, cloneObject, defaultPalette, isType, phases, setType, stripAnsi, values;
 
 require("isNodeJS");
 
+cloneObject = require("cloneObject");
+
 stripAnsi = require("strip-ansi");
 
-LazyVar = require("lazy-var");
-
 setType = require("setType");
-
-combine = require("combine");
 
 isType = require("isType");
 
@@ -31,7 +29,7 @@ values = {
 phases = {
   initInstance: function(options) {
     var colors, defineAttributes, palette;
-    palette = options.palette || combine({}, defaultPalette);
+    palette = options.palette || cloneObject(defaultPalette);
     colors = Object.keys(palette.bright);
     defineAttributes = (function(_this) {
       return function(target, transform) {

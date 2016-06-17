@@ -1,4 +1,4 @@
-var Event, Formatter, Line, Logger, Promise, Type, Void, assert, assertType, concatArgs, emptyFunction, stripAnsi, sync, type;
+var Event, Formatter, Line, Promise, Type, assert, assertType, concatArgs, emptyFunction, stripAnsi, type;
 
 require("isNodeJS");
 
@@ -14,13 +14,9 @@ Promise = require("Promise");
 
 assert = require("assert");
 
-Event = require("event");
-
-Void = require("Void");
+Event = require("Event");
 
 Type = require("Type");
-
-sync = require("sync");
 
 concatArgs = require("./helpers/concatArgs");
 
@@ -97,10 +93,10 @@ type.defineMethods({
     this.moat(0);
   },
   moat: function(width) {
-    var _width;
+    var emptyLines;
     assertType(width, Number);
-    _width = this._computeMoatFrom(this._line);
-    while (_width++ < width) {
+    emptyLines = this._countEmptyLines(this._line);
+    while (width >= emptyLines++) {
       this._printNewLine();
     }
   },
@@ -182,20 +178,21 @@ type.defineMethods({
     }
     this._printToChunk(lastLine);
   },
-  _computeMoatFrom: function(line) {
-    var width;
-    width = -1;
-    while (true) {
-      if (this.lines[line].length === 0) {
-        width++;
-      } else {
+  _countEmptyLines: function() {
+    var count, index, line;
+    count = 0;
+    index = this._line;
+    while (line = this.lines[index]) {
+      if (stripAnsi(line.contents).trim().length) {
         break;
       }
-      if (line-- === 0) {
+      count += 1;
+      if (index === 0) {
         break;
       }
+      index -= 1;
     }
-    return width;
+    return count;
   },
   _printToChunk: function(message, chunk) {
     if (chunk == null) {
@@ -253,6 +250,6 @@ type.defineMethods({
   }
 });
 
-module.exports = Logger = type.build();
+module.exports = type.build();
 
 //# sourceMappingURL=../../map/src/Logger.map
