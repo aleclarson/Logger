@@ -26,13 +26,9 @@ type = Type("Logger", function() {
   return this._log.apply(this, arguments);
 });
 
-type.optionTypes = {
-  print: Function
-};
-
-type.optionDefaults = {
-  print: emptyFunction
-};
+type.defineOptions({
+  print: Function.withDefault(emptyFunction)
+});
 
 type.defineProperties({
   line: {
@@ -252,4 +248,4 @@ type.defineMethods({
 
 module.exports = type.build();
 
-//# sourceMappingURL=../../map/src/Logger.map
+//# sourceMappingURL=map/Logger.map

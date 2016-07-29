@@ -32,12 +32,9 @@ type = Type "Logger_Style", ->
 
     return line
 
-type.optionTypes =
-  palette: Palette
-  transform: Function
-
-type.optionDefaults =
-  transform: emptyFunction.thatReturnsArgument
+type.defineOptions
+  palette: Palette.isRequired
+  transform: Function.withDefault emptyFunction.thatReturnsArgument
 
 type.defineValues
 

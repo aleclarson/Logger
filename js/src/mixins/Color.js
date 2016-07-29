@@ -1,16 +1,10 @@
-var Shape, Style, cloneObject, defaultPalette, isType, phases, setType, stripAnsi, values;
+var Style, cloneObject, defaultPalette, phases, stripAnsi, values;
 
 require("isNodeJS");
 
 cloneObject = require("cloneObject");
 
 stripAnsi = require("strip-ansi");
-
-setType = require("setType");
-
-isType = require("isType");
-
-Shape = require("Shape");
 
 Style = require("../helpers/Style");
 
@@ -93,4 +87,4 @@ defaultPalette = {
   }
 };
 
-//# sourceMappingURL=../../../map/src/mixins/Color.map
+//# sourceMappingURL=map/Color.map

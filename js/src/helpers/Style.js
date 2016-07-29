@@ -45,14 +45,10 @@ type = Type("Logger_Style", function() {
   })(this)));
 });
 
-type.optionTypes = {
-  palette: Palette,
-  transform: Function
-};
-
-type.optionDefaults = {
-  transform: emptyFunction.thatReturnsArgument
-};
+type.defineOptions({
+  palette: Palette.isRequired,
+  transform: Function.withDefault(emptyFunction.thatReturnsArgument)
+});
 
 type.defineValues({
   palette: function(options) {
@@ -107,4 +103,4 @@ type.defineStatics({
 
 module.exports = Style = type.build();
 
-//# sourceMappingURL=../../../map/src/helpers/Style.map
+//# sourceMappingURL=map/Style.map
