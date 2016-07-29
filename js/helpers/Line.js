@@ -6,14 +6,10 @@ Type = require("Type");
 
 type = Type("Logger_Line");
 
-type.optionTypes = {
-  index: Number,
-  contents: String
-};
-
-type.optionDefaults = {
-  contents: ""
-};
+type.defineOptions({
+  index: Number.isRequired,
+  contents: String.withDefault("")
+});
 
 type.createArguments(function(args) {
   if (isType(args[0], Number)) {
@@ -38,4 +34,4 @@ type.defineValues({
 
 module.exports = type.build();
 
-//# sourceMappingURL=../../../map/src/helpers/Line.map
+//# sourceMappingURL=map/Line.map

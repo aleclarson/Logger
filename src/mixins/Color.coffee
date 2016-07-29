@@ -3,9 +3,6 @@ require "isNodeJS"
 
 cloneObject = require "cloneObject"
 stripAnsi = require "strip-ansi"
-setType = require "setType"
-isType = require "isType"
-Shape = require "Shape"
 
 Style = require "../helpers/Style"
 

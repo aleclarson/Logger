@@ -4,12 +4,9 @@ Type = require "Type"
 
 type = Type "Logger_Line"
 
-type.optionTypes =
-  index: Number
-  contents: String
-
-type.optionDefaults =
-  contents: ""
+type.defineOptions
+  index: Number.isRequired
+  contents: String.withDefault ""
 
 type.createArguments (args) ->
 
