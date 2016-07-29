@@ -4,7 +4,7 @@
   "main": "js/Logger",
   "dependencies": {
     "Event": "aleclarson/Event#2.0.0",
-    "Formatter": "aleclarson/Formatter#1.0.0",
+    "Formatter": "aleclarson/Formatter#1.0.1",
     "Nan": "aleclarson/Nan#1.0.0",
     "Null": "aleclarson/Null#1.0.0",
     "Promise": "aleclarson/Promise#1.0.0",
