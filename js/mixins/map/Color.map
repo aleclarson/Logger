@@ -1,7 +1,7 @@
 {
   "version": 3,
   "file": "Color.js",
-  "sourceRoot": "../../../../src/mixins",
+  "sourceRoot": "../../../src/mixins",
   "sources": [
     "Color.coffee"
   ],

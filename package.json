@@ -1,7 +1,7 @@
 {
   "name": "Logger",
   "version": "1.0.0",
-  "main": "js/src/Logger",
+  "main": "js/Logger",
   "dependencies": {
     "Event": "aleclarson/Event#2.0.0",
     "Formatter": "aleclarson/Formatter#1.0.0",
