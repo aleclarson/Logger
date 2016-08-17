@@ -6,30 +6,25 @@ Type = require("Type");
 
 type = Type("Logger_Line");
 
-type.defineOptions({
-  index: Number.isRequired,
-  contents: String.withDefault("")
-});
-
-type.createArguments(function(args) {
+type.initArgs(function(args) {
   if (isType(args[0], Number)) {
     args[0] = {
       index: args[0]
     };
   }
-  return args;
 });
 
-type.defineValues({
-  index: function(options) {
-    return options.index;
-  },
-  contents: function(options) {
-    return options.contents;
-  },
-  length: function(options) {
-    return options.contents.length;
-  }
+type.defineOptions({
+  index: Number.isRequired,
+  contents: String.withDefault("")
+});
+
+type.defineValues(function(options) {
+  return {
+    index: options.index,
+    contents: options.contents,
+    length: options.contents.length
+  };
 });
 
 module.exports = type.build();

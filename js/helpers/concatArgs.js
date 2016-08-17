@@ -6,7 +6,7 @@ Null = require("Null");
 
 Nan = require("Nan");
 
-AddableType = [String, Number, Boolean, Nan, Null];
+AddableType = String.or(Number, Boolean, Nan, Null);
 
 concatArgs = function(args) {
   var arg, i, len, result;
