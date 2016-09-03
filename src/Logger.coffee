@@ -6,28 +6,25 @@ assertType = require "assertType"
 Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
 Promise = require "Promise"
-assert = require "assert"
 Event = require "Event"
 Type = require "Type"
 
 concatArgs = require "./helpers/concatArgs"
 Line = require "./helpers/Line"
 
-type = Type "Logger", -> @_log.apply this, arguments
+type = Type "Logger"
 
 type.defineOptions
   print: Function.withDefault emptyFunction
 
-type.defineProperties
+type.defineFunction ->
+  @_log.apply this, arguments
 
-  line: get: ->
-    @lines[@_line]
-
-  _line:
-    value: 0
-    didSet: (newValue) ->
-      assertType newValue, Number
-      assert @lines[newValue], "Invalid line: " + newValue
+type.addMixins [
+  require "./mixins/Indent"
+  require "./mixins/Color"
+  require "./mixins/Env"
+]
 
 type.defineValues
 
@@ -45,20 +42,29 @@ type.defineValues
       queue.done()
       return
 
-type.initInstance (options) ->
-  assert options.process or options.print,
-    reason: "Must provide 'options.process' or 'options.print'!"
-
-type.addMixins [
-  require "./mixins/Indent"
-  require "./mixins/Color"
-  require "./mixins/Env"
-]
-
-type.defineValues
-
   _format: ->
     Formatter { colors: @color }
+
+type.defineProperties
+
+  _line:
+    value: 0
+    didSet: (newValue) ->
+      assertType newValue, Number
+      if not @lines[newValue]
+        throw Error "Invalid line: " + newValue
+
+type.initInstance (options) ->
+  unless options.process or options.print
+    throw Error "Must provide 'options.process' or 'options.print'!"
+
+#
+# Prototype
+#
+
+type.defineGetters
+
+  line: -> @lines[@_line]
 
 type.defineMethods
 
@@ -101,7 +107,8 @@ type.defineMethods
   clearLine: (line) ->
 
     line = @lines[line or @_line]
-    assert line, "Invalid line: " + line
+    if not line
+      throw Error "Invalid line: " + line
 
     @__willClearLine line
     line.contents = ""

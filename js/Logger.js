@@ -1,4 +1,4 @@
-var Event, Formatter, Line, Promise, Type, assert, assertType, concatArgs, emptyFunction, stripAnsi, type;
+var Event, Formatter, Line, Promise, Type, assertType, concatArgs, emptyFunction, stripAnsi, type;
 
 require("isNodeJS");
 
@@ -12,8 +12,6 @@ stripAnsi = require("strip-ansi");
 
 Promise = require("Promise");
 
-assert = require("assert");
-
 Event = require("Event");
 
 Type = require("Type");
@@ -22,28 +20,17 @@ concatArgs = require("./helpers/concatArgs");
 
 Line = require("./helpers/Line");
 
-type = Type("Logger", function() {
-  return this._log.apply(this, arguments);
-});
+type = Type("Logger");
 
 type.defineOptions({
   print: Function.withDefault(emptyFunction)
 });
 
-type.defineProperties({
-  line: {
-    get: function() {
-      return this.lines[this._line];
-    }
-  },
-  _line: {
-    value: 0,
-    didSet: function(newValue) {
-      assertType(newValue, Number);
-      return assert(this.lines[newValue], "Invalid line: " + newValue);
-    }
-  }
+type.defineFunction(function() {
+  return this._log.apply(this, arguments);
 });
+
+type.addMixins([require("./mixins/Indent"), require("./mixins/Color"), require("./mixins/Env")]);
 
 type.defineValues({
   ln: isNodeJS ? require("os").EOL : "\n",
@@ -63,22 +50,35 @@ type.defineValues({
       });
       queue.done();
     };
-  }
-});
-
-type.initInstance(function(options) {
-  return assert(options.process || options.print, {
-    reason: "Must provide 'options.process' or 'options.print'!"
-  });
-});
-
-type.addMixins([require("./mixins/Indent"), require("./mixins/Color"), require("./mixins/Env")]);
-
-type.defineValues({
+  },
   _format: function() {
     return Formatter({
       colors: this.color
     });
+  }
+});
+
+type.defineProperties({
+  _line: {
+    value: 0,
+    didSet: function(newValue) {
+      assertType(newValue, Number);
+      if (!this.lines[newValue]) {
+        throw Error("Invalid line: " + newValue);
+      }
+    }
+  }
+});
+
+type.initInstance(function(options) {
+  if (!(options.process || options.print)) {
+    throw Error("Must provide 'options.process' or 'options.print'!");
+  }
+});
+
+type.defineGetters({
+  line: function() {
+    return this.lines[this._line];
   }
 });
 
@@ -120,7 +120,9 @@ type.defineMethods({
   },
   clearLine: function(line) {
     line = this.lines[line || this._line];
-    assert(line, "Invalid line: " + line);
+    if (!line) {
+      throw Error("Invalid line: " + line);
+    }
     this.__willClearLine(line);
     line.contents = "";
     line.length = 0;

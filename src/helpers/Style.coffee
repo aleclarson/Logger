@@ -10,7 +10,13 @@ concatArgs = require "./concatArgs"
 
 Palette = Shape "Palette", { bright: Object, dim: Object }
 
-type = Type "Logger_Style", ->
+type = Type "Logger_Style"
+
+type.defineOptions
+  palette: Palette.isRequired
+  transform: Function.withDefault emptyFunction.thatReturnsArgument
+
+type.defineFunction ->
 
   args = [] # Must not leak arguments object!
   args[index] = value for value, index in arguments
@@ -31,10 +37,6 @@ type = Type "Logger_Style", ->
       line = color + line + ansi.reset
 
     return line
-
-type.defineOptions
-  palette: Palette.isRequired
-  transform: Function.withDefault emptyFunction.thatReturnsArgument
 
 type.defineValues
 

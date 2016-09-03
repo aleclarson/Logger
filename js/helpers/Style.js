@@ -19,7 +19,14 @@ Palette = Shape("Palette", {
   dim: Object
 });
 
-type = Type("Logger_Style", function() {
+type = Type("Logger_Style");
+
+type.defineOptions({
+  palette: Palette.isRequired,
+  transform: Function.withDefault(emptyFunction.thatReturnsArgument)
+});
+
+type.defineFunction(function() {
   var args, colors, i, index, len, lines, value;
   args = [];
   for (index = i = 0, len = arguments.length; i < len; index = ++i) {
@@ -43,11 +50,6 @@ type = Type("Logger_Style", function() {
       return line;
     };
   })(this)));
-});
-
-type.defineOptions({
-  palette: Palette.isRequired,
-  transform: Function.withDefault(emptyFunction.thatReturnsArgument)
 });
 
 type.defineValues({
