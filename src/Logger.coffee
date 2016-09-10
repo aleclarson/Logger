@@ -2,9 +2,11 @@
 require "isNodeJS"
 
 emptyFunction = require "emptyFunction"
+cloneObject = require "cloneObject"
 assertType = require "assertType"
 Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
+cloneArgs = require "cloneArgs"
 Promise = require "Promise"
 Event = require "Event"
 Type = require "Type"
@@ -26,24 +28,21 @@ type.addMixins [
   require "./mixins/Env"
 ]
 
-type.defineValues
+type.defineValues (options) ->
 
-  ln: if isNodeJS then require("os").EOL else "\n"
+  lines: [ new Line 0 ]
 
-  lines: -> [ new Line 0 ]
+  didPrint: Event()
 
-  didPrint: -> Event()
+  didFlush: Event()
 
-  _print: ({ print }) ->
-    queue = Promise()
-    return (message) ->
-      queue = queue.then ->
-        print message
-      queue.done()
-      return
+  _queue: []
 
-  _format: ->
-    Formatter { colors: @color }
+  _flushing: null
+
+  _print: options.print
+
+  _format: Formatter {colors: @color}
 
 type.defineProperties
 
@@ -54,10 +53,6 @@ type.defineProperties
       if not @lines[newValue]
         throw Error "Invalid line: " + newValue
 
-type.initInstance (options) ->
-  unless options.process or options.print
-    throw Error "Must provide 'options.process' or 'options.print'!"
-
 #
 # Prototype
 #
@@ -65,6 +60,28 @@ type.initInstance (options) ->
 type.defineGetters
 
   line: -> @lines[@_line]
+
+type.definePrototype
+
+  ln: if isNodeJS then require("os").EOL else "\n"
+
+type.defineBoundMethods
+
+  _flushAsync: ->
+
+    chunk = @_queue.shift()
+    return if not chunk
+
+    @_print chunk.message
+    @didPrint.emit chunk
+
+    if @_queue.length
+      @_flushing = Promise.try @_flushAsync
+      return
+
+    @_flushing = null
+    @didFlush.emit()
+    return
 
 type.defineMethods
 
@@ -85,6 +102,16 @@ type.defineMethods
     @moat 0
     return
 
+  warn: (message) ->
+    if isNodeJS
+      @moat 1
+      @yellow "Warning: "
+      @white message
+      @moat 1
+    else
+      console.warn message
+    return
+
   ansi: (code) ->
     return unless isNodeJS
     @_print "\x1b[#{code}"
@@ -98,45 +125,27 @@ type.defineMethods
     @moat 1
     return
 
-  clear: ->
-    @__willClear()
-    @lines = [ new Line 0 ]
-    @_line = 0
+  flush: ->
+
+    return if not @_flushing
+    for chunk in @_queue
+      @_print chunk.message
+      @didPrint.emit chunk
+
+    @_queue.length = 0
+    @_flushing = null
+    @didFlush.emit()
     return
 
-  clearLine: (line) ->
-
-    line = @lines[line or @_line]
-    if not line
-      throw Error "Invalid line: " + line
-
-    @__willClearLine line
-    line.contents = ""
-    line.length = 0
-    return
-
-  deleteLine: ->
-    @lines.pop()
-    if @_process # TODO: Move this into the MainLogger
-      @ansi "2K"
-      @cursor.y--
-    else
-      @_line--
-    return
-
-  __willClear: emptyFunction
-
-  __willClearLine: emptyFunction
-
-  _canLog: ->
-    return no if @isQuiet
-    return yes
+  onceFlushed: (callback) ->
+    if @_flushing isnt null
+      return @didFlush(1, callback).start()
+    return Promise.try callback
 
   _log: ->
-    return unless @_canLog()
-    args = [] # Must not leak arguments object!
-    args.push value for value in arguments
-    @_logArgs args
+    return unless @isQuiet
+    args = cloneArgs arguments
+    return @_logArgs args
 
   _logArgs: (args) ->
     assertType args, Array
@@ -144,6 +153,66 @@ type.defineMethods
     return no if args.length is 0
     @_printLines args.split @ln
     return yes
+
+  _enqueue: (chunk) ->
+    @_queue.push cloneObject chunk
+    @_flushing ?= Promise.try @_flushAsync
+    return
+
+  _initChunk: (chunk) ->
+    chunk.line ?= @_line
+    chunk.length ?= stripAnsi(chunk.message).length
+    return chunk
+
+  _printToChunk: (message, chunk) ->
+    if chunk
+    then chunk.message = message
+    else chunk = {message}
+    @_initChunk chunk
+    @_printChunk chunk
+
+  _printChunk: (chunk) ->
+
+    assertType chunk, Object
+    assertType chunk.message, String
+    assertType chunk.length, Number
+
+    return no if chunk.length is 0
+
+    if chunk.silent isnt yes
+
+      # Outside of NodeJS, messages are buffered because `console.log` must be used.
+      isNodeJS and @_enqueue chunk
+
+      # Newlines are marked as `hidden` so they're not added to the `line.contents`.
+      if chunk.hidden isnt yes
+        line = @line
+        @line.contents += chunk.message
+        @line.length += chunk.length
+
+    return yes
+
+  _printNewLine: ->
+
+    # Push a new Line onto `log.lines` if currently on the last line.
+    if @_line is @lines.length - 1
+
+      # Outside of NodeJS, messages are buffered because `console.log` must be used.
+      isNodeJS or @_enqueue @_initChunk {message: @line.contents}
+
+      @_printToChunk @ln, hidden: yes
+
+      line = Line @lines.length
+      @lines.push line
+      @_line = line.index
+      return
+
+    # Since line splicing is not yet supported, just move the cursor down and overwrite existing lines.
+    if isNodeJS
+      @_printToChunk @ln, silent: yes
+      return
+
+    throw Error "Changing a Logger's `_line` property is unsupported outside of NodeJS."
 
   _printLines: (lines) ->
     assertType lines, Array
@@ -168,55 +237,5 @@ type.defineMethods
       index -= 1
 
     return count
-
-  _printToChunk: (message, chunk = {}) ->
-    chunk.message = message
-    chunk.line ?= @_line
-    chunk.length ?= stripAnsi(chunk.message).length
-    @_printChunk chunk
-
-  _printChunk: (chunk) ->
-
-    assertType chunk, Object
-    assertType chunk.message, String
-    assertType chunk.length, Number
-
-    return no if chunk.length is 0
-
-    if chunk.silent isnt yes
-
-      # Outside of NodeJS, messages are buffered because `console.log` must be used.
-      @_print chunk.message if isNodeJS
-
-      @didPrint.emit chunk
-
-      # Newlines are marked as `hidden` so they're not added to the `line.contents`.
-      if chunk.hidden isnt yes
-        line = @line
-        @line.contents += chunk.message
-        @line.length += chunk.length
-
-    return yes
-
-  _printNewLine: ->
-
-    # Push a new Line onto `log.lines` if currently on the last line.
-    if @_line is @lines.length - 1
-
-      # Outside of NodeJS, messages are buffered because `console.log` must be used.
-      @_print @line.contents unless isNodeJS
-
-      @_printToChunk @ln, hidden: yes
-
-      line = Line @lines.length
-      @lines.push line
-      @_line = line.index
-
-    else unless isNodeJS
-      throw Error "Changing a Logger's `_line` property is unsupported outside of NodeJS."
-
-    # Since line splicing is not yet supported, just move the cursor down and overwrite existing lines.
-    else
-      @_printToChunk @ln, silent: yes
 
 module.exports = type.build()

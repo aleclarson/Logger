@@ -13,6 +13,7 @@
     "Type": "aleclarson/Type#1.1.0",
     "ansi-256-colors": "^1.1.0",
     "assertType": "aleclarson/assertType#2.0.0",
+    "cloneArgs": "aleclarson/cloneArgs#1.0.0",
     "cloneObject": "aleclarson/cloneObject#1.0.0",
     "emptyFunction": "aleclarson/emptyFunction#1.0.0",
     "hook": "aleclarson/hook#1.0.0",
