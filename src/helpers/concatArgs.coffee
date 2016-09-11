@@ -3,7 +3,7 @@ isType = require "isType"
 Null = require "Null"
 Nan = require "Nan"
 
-AddableType = [ String, Number, Boolean, Nan, Null ]
+AddableType = String.or(Number, Boolean, Nan, Null)
 
 # Transforms an array of arguments into a single string.
 concatArgs = (args) ->
