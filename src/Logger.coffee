@@ -143,7 +143,7 @@ type.defineMethods
     return Promise.try callback
 
   _log: ->
-    return unless @isQuiet
+    return if @isQuiet
     args = cloneArgs arguments
     return @_logArgs args
 
