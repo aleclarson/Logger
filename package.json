@@ -2,6 +2,13 @@
   "name": "Logger",
   "version": "2.0.0",
   "main": "js/Logger",
+  "plugins": [
+    "lotus-coffee"
+  ],
+  "scripts": {
+    "build": "coffee -cb -o js src",
+    "postinstall": "postinstall-build js 'npm run build'"
+  },
   "dependencies": {
     "Event": "aleclarson/Event#2.0.1",
     "Formatter": "aleclarson/Formatter#1.0.1",
@@ -19,16 +26,15 @@
     "hook": "aleclarson/hook#1.0.0",
     "isNodeJS": "aleclarson/isNodeJS#1.0.0",
     "isType": "aleclarson/isType#1.0.0",
+    "postinstall-build": "0.2.x",
     "repeat-string": "aleclarson/repeat-string#1.5.4",
     "strip-ansi": "^3.0.1",
     "sync": "aleclarson/sync#1.0.0"
   },
-  "lotus": {
-    "plugins": [
-      "lotus-coffee"
-    ],
-    "implicitDependencies": [
-      "os"
-    ]
-  }
+  "devDependencies": {
+    "coffee-script": "1.9.x"
+  },
+  "implicitDependencies": [
+    "os"
+  ]
 }
