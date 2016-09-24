@@ -1,8 +1,7 @@
 
-require "isNodeJS"
-
 cloneObject = require "cloneObject"
 stripAnsi = require "strip-ansi"
+isNodeJS = require "isNodeJS"
 
 Style = require "../helpers/Style"
 

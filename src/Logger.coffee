@@ -1,12 +1,11 @@
 
-require "isNodeJS"
-
 emptyFunction = require "emptyFunction"
 cloneObject = require "cloneObject"
 assertType = require "assertType"
 Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
 cloneArgs = require "cloneArgs"
+isNodeJS = require "isNodeJS"
 Promise = require "Promise"
 Event = require "Event"
 Type = require "Type"
