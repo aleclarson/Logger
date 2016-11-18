@@ -1,12 +1,11 @@
 
-require "isNodeJS"
-
 emptyFunction = require "emptyFunction"
 cloneObject = require "cloneObject"
 assertType = require "assertType"
 Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
 cloneArgs = require "cloneArgs"
+isNodeJS = require "isNodeJS"
 Promise = require "Promise"
 Event = require "Event"
 Type = require "Type"
@@ -143,7 +142,7 @@ type.defineMethods
     return Promise.try callback
 
   _log: ->
-    return unless @isQuiet
+    return if @isQuiet
     args = cloneArgs arguments
     return @_logArgs args
 

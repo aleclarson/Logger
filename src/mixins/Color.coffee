@@ -1,8 +1,7 @@
 
-require "isNodeJS"
-
 cloneObject = require "cloneObject"
 stripAnsi = require "strip-ansi"
+isNodeJS = require "isNodeJS"
 
 Style = require "../helpers/Style"
 
@@ -47,7 +46,7 @@ phases =
 defaultPalette =
 
   bright:
-    red: [4, 0, 0]
+    red: [5, 0, 0]
     blue: [0, 1, 5]
     green: [0, 5, 1]
     cyan: [0, 3, 4]

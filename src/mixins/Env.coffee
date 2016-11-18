@@ -1,7 +1,6 @@
 
-require "isNodeJS"
-
 emptyFunction = require "emptyFunction"
+isNodeJS = require "isNodeJS"
 
 module.exports = (type) ->
 
