@@ -1,6 +1,6 @@
 {
   "name": "Logger",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "js/Logger",
   "plugins": [
     "lotus-coffee"
@@ -10,7 +10,7 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
-    "Event": "aleclarson/Event#2.1.0",
+    "Event": "aleclarson/Event#3.0.0",
     "Formatter": "aleclarson/Formatter#1.0.2",
     "Nan": "aleclarson/Nan#1.1.1",
     "Null": "aleclarson/Null#1.0.1",

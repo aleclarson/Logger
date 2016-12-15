@@ -31,9 +31,9 @@ type.defineValues (options) ->
 
   lines: [ new Line 0 ]
 
-  didPrint: Event()
+  didPrint: Event {async: yes}
 
-  didFlush: Event()
+  didFlush: Event {async: yes}
 
   _queue: []
 
