@@ -25,6 +25,8 @@ type.defineValues (options) ->
 
   lines: [new Line 0]
 
+  willPrint: Event()
+
   didPrint: Event {async: yes}
 
   didFlush: Event {async: yes}
@@ -165,8 +167,11 @@ type.defineMethods
     @_printChunk chunk
 
   _printChunk: (chunk) ->
+    assertType chunk, Object, "chunk"
 
-    assertType chunk, Object
+    # Allow listeners to edit the chunk before it's validated.
+    @willPrint.emit chunk
+
     assertType chunk.message, String, "chunk.message"
     assertType chunk.length, Number, "chunk.length"
 
