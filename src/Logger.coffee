@@ -21,15 +21,11 @@ type.defineOptions
 type.defineFunction ->
   @_log.apply this, arguments
 
-type.addMixins [
-  require "./mixins/Indent"
-  require "./mixins/Color"
-  require "./mixins/Env"
-]
-
 type.defineValues (options) ->
 
-  lines: [ new Line 0 ]
+  lines: [new Line 0]
+
+  willPrint: Event()
 
   didPrint: Event {async: yes}
 
@@ -92,7 +88,7 @@ type.defineMethods
 
   moat: (width) ->
     assertType width, Number
-    emptyLines = @_countEmptyLines @_line
+    emptyLines = @_countEmptyLines()
     @_printNewLine() while width >= emptyLines++
     return
 
@@ -171,23 +167,28 @@ type.defineMethods
     @_printChunk chunk
 
   _printChunk: (chunk) ->
+    assertType chunk, Object, "chunk"
 
-    assertType chunk, Object
-    assertType chunk.message, String
-    assertType chunk.length, Number
+    # Allow listeners to edit the chunk before it's validated.
+    @willPrint.emit chunk
 
+    assertType chunk.message, String, "chunk.message"
+    assertType chunk.length, Number, "chunk.length"
+
+    # Empty chunks are never printed.
     return no if chunk.length is 0
 
+    # Marking a chunk as "silent" is useful when nothing should be printed.
     if chunk.silent isnt yes
 
       # Outside of NodeJS, messages are buffered because `console.log` must be used.
       isNodeJS and @_enqueue chunk
 
-      # Newlines are marked as `hidden` so they're not added to the `line.contents`.
+      # Marking a chunk as "hidden" is useful when `@line` should not be changed.
       if chunk.hidden isnt yes
-        line = @line
-        @line.contents += chunk.message
-        @line.length += chunk.length
+        {line} = this
+        line.contents += chunk.message
+        line.length += chunk.length
 
     return yes
 
@@ -199,7 +200,7 @@ type.defineMethods
       # Outside of NodeJS, messages are buffered because `console.log` must be used.
       isNodeJS or @_enqueue @_initChunk {message: @line.contents}
 
-      @_printToChunk @ln, hidden: yes
+      @_printToChunk @ln, {hidden: yes}
 
       line = Line @lines.length
       @lines.push line
@@ -208,7 +209,7 @@ type.defineMethods
 
     # Since line splicing is not yet supported, just move the cursor down and overwrite existing lines.
     if isNodeJS
-      @_printToChunk @ln, silent: yes
+      @_printToChunk @ln, {silent: yes}
       return
 
     throw Error "Changing a Logger's `_line` property is unsupported outside of NodeJS."
@@ -236,5 +237,11 @@ type.defineMethods
       index -= 1
 
     return count
+
+type.addMixins [
+  require "./mixins/Indent"
+  require "./mixins/Color"
+  require "./mixins/Env"
+]
 
 module.exports = type.build()

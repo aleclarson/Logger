@@ -1,16 +1,11 @@
 
 emptyFunction = require "emptyFunction"
 isNodeJS = require "isNodeJS"
+Type = require "Type"
 
-module.exports = (type) ->
+mixin = Type.Mixin()
 
-  type.defineValues values
-
-  type.defineMethods methods
-
-  type.initInstance phases.initInstance
-
-values =
+mixin.defineValues
 
   isQuiet: no
 
@@ -28,7 +23,7 @@ values =
 
   _debug: emptyFunction
 
-methods =
+mixin.defineMethods
 
   verbose: ->
     @_verbose.apply this, arguments
@@ -36,10 +31,8 @@ methods =
   debug: ->
     @_debug.apply this, arguments
 
-phases =
+isNodeJS and mixin.initInstance (options) ->
+  @isDebug = ("--debug" in process.argv) or (process.env.DEBUG is "true")
+  @isVerbose = ("--verbose" in process.argv) or (process.env.VERBOSE is "true")
 
-  initInstance: (options) ->
-
-    if isNodeJS
-      @isDebug = ("--debug" in process.argv) or (process.env.DEBUG is "true")
-      @isVerbose = ("--verbose" in process.argv) or (process.env.VERBOSE is "true")
+module.exports = mixin.apply

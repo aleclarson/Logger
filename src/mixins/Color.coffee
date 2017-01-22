@@ -2,46 +2,43 @@
 cloneObject = require "cloneObject"
 stripAnsi = require "strip-ansi"
 isNodeJS = require "isNodeJS"
+Type = require "Type"
 
 Style = require "../helpers/Style"
 
-module.exports = (type) ->
+mixin = Type.Mixin()
 
-  type.defineValues values
-
-  type.initInstance phases.initInstance
-
-values =
+mixin.defineValues
 
   isColorful: no
 
   color: -> {}
 
-phases =
+mixin.initInstance (options) ->
 
-  initInstance: (options) ->
+  palette = options.palette or cloneObject defaultPalette
+  colors = Object.keys palette.bright
 
-    palette = options.palette or cloneObject defaultPalette
-    colors = Object.keys palette.bright
+  defineAttributes = (target, transform) =>
 
-    defineAttributes = (target, transform) =>
+    attributes = Style.createAttributes colors, (key, value) ->
+      style = Style { palette, transform }
+      style[key] = value
+      style
 
-      attributes = Style.createAttributes colors, (key, value) ->
-        style = Style { palette, transform }
-        style[key] = value
-        style
+    for key, prop of attributes
+      prop.define target, key
+    return
 
-      for key, prop of attributes
-        prop.define target, key
-      return
+  defineAttributes this, (lines) =>
+    lines = lines.map stripAnsi if not @isColorful
+    return @_printLines lines
 
-    defineAttributes this, (lines) =>
-      lines = lines.map stripAnsi if not @isColorful
-      return @_printLines lines
+  defineAttributes @color, (lines) =>
+    lines = lines.map stripAnsi if not @isColorful
+    return lines.join @ln
 
-    defineAttributes @color, (lines) =>
-      lines = lines.map stripAnsi if not @isColorful
-      return lines.join @ln
+module.exports = mixin.apply
 
 defaultPalette =
 

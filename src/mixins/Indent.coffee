@@ -1,25 +1,17 @@
 
 repeatString = require "repeat-string"
 assertType = require "assertType"
-hook = require "hook"
+Type = require "Type"
 
-module.exports = (type) ->
+mixin = Type.Mixin()
 
-  type.defineValues values
-
-  type.defineProperties properties
-
-  type.defineMethods methods
-
-  type.initInstance phases.initInstance
-
-values =
+mixin.defineValues
 
   _indent: ""
 
   _indentStack: -> []
 
-properties =
+mixin.defineProperties
 
   indent:
     value: 0
@@ -33,7 +25,7 @@ properties =
       assertType newValue, String
       @_indent = repeatString newValue, @indent
 
-methods =
+mixin.defineMethods
 
   plusIndent: (indent) ->
     @pushIndent indent + @indent
@@ -59,14 +51,9 @@ methods =
     @popIndent()
     return
 
-phases =
+mixin.initInstance do ->
 
-  initInstance: ->
-    hook.before this, "_printChunk", hooks._printChunk
-
-hooks =
-
-  _printChunk: (chunk) ->
+  willPrint = (chunk) ->
 
     # Only indent empty lines!
     return if @line.length > 0
@@ -75,10 +62,16 @@ hooks =
     if chunk.indent is yes
       chunk.message = @_indent
       chunk.length = @_indent.length
+      return
 
     # Avoid indenting empty chunks and line-break chunks.
-    else unless (chunk.length is 0) or (chunk.message is @ln)
+    unless (chunk.length is 0) or (chunk.message is @ln)
       chunk.message = @_indent + chunk.message
       chunk.length += @_indent.length
+      return
 
-    return
+  return ->
+    listener = willPrint.bind this
+    @willPrint(listener).start()
+
+module.exports = mixin.apply
