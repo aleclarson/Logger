@@ -4,14 +4,16 @@ Type = require "Type"
 
 type = Type "Logger_Line"
 
-type.initArgs (args) ->
-  if isType args[0], Number
-    args[0] = index: args[0]
-  return
+type.defineArgs ->
 
-type.defineOptions
-  index: Number.isRequired
-  contents: String.withDefault ""
+  create: (args) ->
+    if isType args[0], Number
+      args[0] = index: args[0]
+    return args
+
+  types: {index: Number, contents: String}
+  defaults: {contents: ""}
+  required: {index: yes}
 
 type.defineValues (options) ->
 

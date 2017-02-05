@@ -15,8 +15,9 @@ Line = require "./helpers/Line"
 
 type = Type "Logger"
 
-type.defineOptions
-  print: Function.withDefault emptyFunction
+type.defineArgs ->
+  types: {print: Function}
+  defaults: {print: emptyFunction}
 
 type.defineFunction ->
   @_log.apply this, arguments
