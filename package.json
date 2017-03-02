@@ -10,7 +10,6 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
-    "Event": "aleclarson/Event#3.1.2",
     "Formatter": "aleclarson/Formatter#1.0.2",
     "Nan": "aleclarson/Nan#1.1.1",
     "Null": "aleclarson/Null#1.0.1",
@@ -23,6 +22,7 @@
     "cloneArgs": "aleclarson/cloneArgs#1.0.0",
     "cloneObject": "aleclarson/cloneObject#1.0.1",
     "emptyFunction": "aleclarson/emptyFunction#1.0.0",
+    "eve": "aleclarson/eve#1.1.0",
     "hook": "aleclarson/hook#1.0.0",
     "isNodeJS": "aleclarson/isNodeJS#2.0.0",
     "isType": "aleclarson/isType#1.0.1",

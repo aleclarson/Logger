@@ -7,7 +7,7 @@ stripAnsi = require "strip-ansi"
 cloneArgs = require "cloneArgs"
 isNodeJS = require "isNodeJS"
 Promise = require "Promise"
-Event = require "Event"
+Event = require "eve"
 Type = require "Type"
 
 concatArgs = require "./helpers/concatArgs"
@@ -135,8 +135,8 @@ type.defineMethods
 
   onceFlushed: (callback) ->
     if @_flushing isnt null
-      return @didFlush(1, callback).start()
-    return Promise.try callback
+    then @didFlush.once callback
+    else Promise.try callback
 
   _log: ->
     return if @isQuiet
