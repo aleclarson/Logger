@@ -23,7 +23,6 @@
     "cloneObject": "aleclarson/cloneObject#1.0.1",
     "emptyFunction": "aleclarson/emptyFunction#1.0.0",
     "eve": "aleclarson/eve#1.1.0",
-    "hook": "aleclarson/hook#1.0.0",
     "isNodeJS": "aleclarson/isNodeJS#2.0.0",
     "isType": "aleclarson/isType#1.0.1",
     "repeat-string": "aleclarson/repeat-string#1.5.4",
