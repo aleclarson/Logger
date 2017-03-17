@@ -71,7 +71,6 @@ mixin.initInstance do ->
       return
 
   return ->
-    listener = willPrint.bind this
-    @willPrint(listener).start()
+    @willPrint willPrint.bind this
 
 module.exports = mixin.apply

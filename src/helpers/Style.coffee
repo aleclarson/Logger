@@ -12,9 +12,10 @@ Palette = Shape "Palette", { bright: Object, dim: Object }
 
 type = Type "Logger_Style"
 
-type.defineOptions
-  palette: Palette.isRequired
-  transform: Function.withDefault emptyFunction.thatReturnsArgument
+type.defineArgs ->
+  types: {palette: Palette, transform: Function}
+  defaults: {transform: emptyFunction.thatReturnsArgument}
+  required: {palette: yes}
 
 type.defineFunction ->
 
