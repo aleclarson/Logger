@@ -145,7 +145,7 @@ type.defineMethods
   _logArgs: (args) ->
     assertType args, Array
     args = concatArgs args
-    return no if args.length is 0
+    return no unless args.length
     @_printLines args.split @ln
     return yes
 

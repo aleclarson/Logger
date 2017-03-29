@@ -8,11 +8,11 @@ Style = require "../utils/Style"
 
 mixin = Type.Mixin()
 
-mixin.defineValues
+mixin.defineValues ->
 
   isColorful: no
 
-  color: -> {}
+  color: {}
 
 mixin.initInstance (options) ->
 
