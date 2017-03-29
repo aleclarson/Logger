@@ -10,8 +10,8 @@ Promise = require "Promise"
 Event = require "eve"
 Type = require "Type"
 
-concatArgs = require "./helpers/concatArgs"
-Line = require "./helpers/Line"
+concatArgs = require "./utils/concatArgs"
+Line = require "./utils/Line"
 
 type = Type "Logger"
 

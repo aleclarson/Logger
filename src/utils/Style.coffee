@@ -1,5 +1,6 @@
 
 emptyFunction = require "emptyFunction"
+sliceArray = require "sliceArray"
 Property = require "Property"
 Shape = require "Shape"
 ansi = require "ansi-256-colors"
@@ -18,30 +19,23 @@ type.defineArgs ->
   required: {palette: yes}
 
 type.defineFunction ->
-
-  args = [] # Must not leak arguments object!
-  args[index] = value for value, index in arguments
-
+  lines = concatArgs(sliceArray arguments).split "\n"
   colors = @palette[if @isDim then "dim" else "bright"]
-
-  lines = concatArgs args
-  lines = lines.split "\n"
 
   @_transform sync.map lines, (line) =>
 
     if @isBold
       line = "\x1b[1m" + line + "\x1b[22m"
 
-    color = @fg and colors[@fg]
-    if color
+    if color = @fg and colors[@fg]
       color = ansi.fg.getRgb.apply null, color
       line = color + line + ansi.reset
 
     return line
 
-type.defineValues
+type.defineValues (options) ->
 
-  palette: (options) -> options.palette
+  palette: options.palette
 
   fg: null
 
@@ -49,7 +43,7 @@ type.defineValues
 
   isBold: no
 
-  _transform: (options) -> options.transform
+  _transform: options.transform
 
 type.initInstance ->
 
@@ -57,11 +51,10 @@ type.initInstance ->
 
   attributes = Style.createAttributes colors, (key, value) ->
     this[key] = value
-    this
+    return this
 
   for key, prop of attributes
     prop.define this, key
-
   return
 
 type.defineStatics
