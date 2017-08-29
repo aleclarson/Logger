@@ -2,16 +2,16 @@
 emptyFunction = require "emptyFunction"
 cloneObject = require "cloneObject"
 assertType = require "assertType"
+sliceArray = require "sliceArray"
 Formatter = require "Formatter"
 stripAnsi = require "strip-ansi"
-cloneArgs = require "cloneArgs"
 isNodeJS = require "isNodeJS"
 Promise = require "Promise"
 Event = require "eve"
 Type = require "Type"
 
-concatArgs = require "./helpers/concatArgs"
-Line = require "./helpers/Line"
+concatArgs = require "./utils/concatArgs"
+Line = require "./utils/Line"
 
 type = Type "Logger"
 
@@ -139,14 +139,13 @@ type.defineMethods
     else Promise.try callback
 
   _log: ->
-    return if @isQuiet
-    args = cloneArgs arguments
-    return @_logArgs args
+    return no if @isQuiet or not arguments.length
+    return @_logArgs sliceArray arguments
 
   _logArgs: (args) ->
     assertType args, Array
     args = concatArgs args
-    return no if args.length is 0
+    return no unless args.length
     @_printLines args.split @ln
     return yes
 

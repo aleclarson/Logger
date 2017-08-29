@@ -9,19 +9,29 @@ mixin.defineValues
 
   isQuiet: no
 
+  _verbose: emptyFunction
+
+  _debug: emptyFunction
+
+mixin.defineProperties
+
   isVerbose:
     value: no
     didSet: (isVerbose) ->
-      @_verbose = if isVerbose then this else emptyFunction
+      @_verbose =
+        if isVerbose
+        then this
+        else emptyFunction
+      return
 
   isDebug:
     value: no
     didSet: (isDebug) ->
-      @_debug = if isDebug then this else emptyFunction
-
-  _verbose: emptyFunction
-
-  _debug: emptyFunction
+      @_debug =
+        if isDebug
+        then this
+        else emptyFunction
+      return
 
 mixin.defineMethods
 

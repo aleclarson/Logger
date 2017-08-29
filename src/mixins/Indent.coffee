@@ -5,11 +5,11 @@ Type = require "Type"
 
 mixin = Type.Mixin()
 
-mixin.defineValues
+mixin.defineValues ->
 
   _indent: ""
 
-  _indentStack: -> []
+  _indentStack: []
 
 mixin.defineProperties
 
